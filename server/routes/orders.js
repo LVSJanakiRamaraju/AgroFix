@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   const { buyer_name, buyer_contact, delivery_address, items } = req.body;
   try {
+    console.log('Received Order:', req.body);
     const result = await pool.query(
       `INSERT INTO orders (buyer_name, buyer_contact, delivery_address, items) 
        VALUES ($1, $2, $3, $4) RETURNING *`,
