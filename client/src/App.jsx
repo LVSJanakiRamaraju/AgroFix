@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import ProductList from "./components/ProductList";
+import OrderForm from "./components/OrderForm";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1 className="text-4xl font-bold text-green-600">Welcome to AgroFix</h1>
-    </>
-  )
+    <div className="min-h-screen bg-gray-100 p-4 space-y-6">
+      <ProductList />
+      <OrderForm />
+    </div>
+  );
 }
 
-export default App
+export default App;
