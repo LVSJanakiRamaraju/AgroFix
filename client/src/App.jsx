@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
+import UserDashboard from './pages/UserDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import { AuthProvider } from './context/authContext';
@@ -27,6 +28,7 @@ const App = () => {
             <PrivateRoute element={<AdminDashboard />} />
           }
         />
+        <Route path='/user-dashboard' element={<UserDashboard />} />
       </Routes>
     </Router>
     </AuthProvider>

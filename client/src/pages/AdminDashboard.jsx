@@ -7,6 +7,7 @@ import axios from 'axios';
 const AdminDashboard = () => {
   const { user, token } = useAuth();
   const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -29,6 +30,17 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts(response.data);
+
+
+      axios.get('http://localhost:5000/api/orders', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((response) => {
+          setOrders(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching orders:', error);
+        });
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -119,6 +131,37 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
+
+
+      <h2 className="text-xl font-semibold mt-8 mb-2 text-gray-800">Orders</h2>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded shadow">
+          <thead>
+            <tr className="bg-blue-600 text-white">
+              <th className="py-3 px-4 text-left">Order ID</th>
+              <th className="py-3 px-4 text-left">Buyer</th>
+              <th className="py-3 px-4 text-left">Product</th>
+              <th className="py-3 px-4 text-left">Quantity</th>
+              <th className="py-3 px-4 text-left">Status</th>
+              <th className="py-3 px-4 text-left">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id} className="border-t border-gray-200 hover:bg-blue-50">
+                <td className="py-2 px-4">{order.id}</td>
+                <td className="py-2 px-4">{order.buyer_name || 'N/A'}</td>
+                <td className="py-2 px-4">{order.xyz}</td>
+                <td className="py-2 px-4">{order.items['quantity']}</td>
+                <td className="py-2 px-4">{order.status}</td>
+                <td className="py-2 px-4">{new Date(order.created_at).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 };

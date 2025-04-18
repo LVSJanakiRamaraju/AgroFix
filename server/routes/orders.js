@@ -35,14 +35,17 @@ router.get('/:id', async (req, res) => {
 });
 
 // Admin: Get all orders
+// GET all orders
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM orders ORDER BY id DESC');
+    const result = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
     res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to get orders' });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ error: 'Database error while fetching orders' });
   }
 });
+
 
 // Admin: Update order status
 router.put('/:id', async (req, res) => {

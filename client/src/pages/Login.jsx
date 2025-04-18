@@ -25,7 +25,7 @@ const Login = () => {
         if (response.data.isAdmin) {
         navigate('/admin-dashboard');
       } else {
-        navigate('/');
+        navigate('/user-dashboard');
       }
         } catch (err) {
             console.error(err);
