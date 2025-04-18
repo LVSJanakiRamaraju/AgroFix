@@ -2,20 +2,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/authContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // Modify the login function to store the role in localStorage
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
         const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-        localStorage.setItem('authToken', response.data.token);
+        const { token, isAdmin } = response.data;
+        localStorage.setItem('authToken', token);
         localStorage.setItem('Admin', response.data.isAdmin);  // Store user role
+        localStorage.setItem('user', JSON.stringify({ email, isAdmin }));
+        await login(email, password);
         console.log(response.data);
         if (response.data.isAdmin) {
         navigate('/admin-dashboard');
@@ -23,6 +28,7 @@ const Login = () => {
         navigate('/');
       }
         } catch (err) {
+            console.error(err);
         setError('Invalid email or password');
         }
     };

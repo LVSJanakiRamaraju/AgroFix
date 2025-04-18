@@ -6,10 +6,11 @@ import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
-
+import { AuthProvider } from './context/authContext';
 
 const App = () => {
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         {/* Public route */}
@@ -28,6 +29,7 @@ const App = () => {
         />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 };
 

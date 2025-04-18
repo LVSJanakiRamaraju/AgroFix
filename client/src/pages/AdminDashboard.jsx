@@ -7,48 +7,118 @@ import axios from 'axios';
 const AdminDashboard = () => {
   const { user, token } = useAuth();
   const [products, setProducts] = useState([]);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    price: '',
+    stock: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect if the user is not authenticated or not an admin
     if (!user || !user.isAdmin) {
-      navigate('/'); // redirect to home if not admin
+      navigate('/');
     } else {
-      // Fetch products only if the user is admin
-      axios.get('http://localhost:5000/api/products', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((response) => {
-          setProducts(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching products:', error);
-        });
+      fetchProducts();
     }
   }, [user, token, navigate]);
 
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/products', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:5000/api/products', newProduct, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNewProduct({ name: '', description: '', price: '', stock: '' });
+      fetchProducts();
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  };
+
   return (
-    <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      <h2>Product List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Quantity Available</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.name}</td>
-              <td>{product.price}</td>
-              <td>{product.quantity_available}</td>
+    <div className="admin-dashboard p-6">
+      <h1 className="text-3xl font-bold mb-4 text-center text-green-700">Admin Dashboard</h1>
+
+      {/* Add Product Form */}
+      <div className="bg-white p-6 rounded shadow mb-8">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Add New Product</h2>
+        <form onSubmit={handleAddProduct} className="grid gap-4 md:grid-cols-2">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newProduct.name}
+            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+            className="border border-gray-300 px-4 py-2 rounded"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={newProduct.description}
+            onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+            className="border border-gray-300 px-4 py-2 rounded"
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            value={newProduct.price}
+            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+            className="border border-gray-300 px-4 py-2 rounded"
+            required
+          />
+          <input
+            type="number"
+            placeholder="Quantity"
+            value={newProduct.stock}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, stock: e.target.value })
+            }
+            className="border border-gray-300 px-4 py-2 rounded"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 col-span-full md:w-1/2 md:ml-auto"
+          >
+            Add Product
+          </button>
+        </form>
+      </div>
+
+      {/* Product Table */}
+      <h2 className="text-xl font-semibold mb-2 text-gray-800">Product List</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded shadow">
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="py-3 px-4 text-left">Name</th>
+              <th className="py-3 px-4 text-left">Price</th>
+              <th className="py-3 px-4 text-left">Quantity Available</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-t border-gray-200 hover:bg-green-50">
+                <td className="py-2 px-4">{product.name}</td>
+                <td className="py-2 px-4">₹{product.price}</td>
+                <td className="py-2 px-4">{product.stock}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
