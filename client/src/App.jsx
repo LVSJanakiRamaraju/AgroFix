@@ -1,23 +1,34 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import ProductCatalogue from './pages/ProductCatalogue';
-import OrderForm from './pages/OrderForm';
-import AdminOrders from './pages/AdminOrders';
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
+import PrivateRoute from './components/PrivateRoute';
+import Home from './pages/Home';
 
-function App() {
+
+const App = () => {
   return (
     <Router>
-      <nav className="bg-green-700 text-white p-4 flex justify-around">
-        <Link to="/">Catalogue</Link>
-        <Link to="/order">Place Order</Link>
-        <Link to="/admin">Admin Orders</Link>
-      </nav>
       <Routes>
-        <Route path="/" element={<ProductCatalogue />} />
-        <Route path="/order" element={<OrderForm />} />
-        <Route path="/admin" element={<AdminOrders />} />
+        {/* Public route */}
+        <Route path="/" element={<Home />} />
+        
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Protected route */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <PrivateRoute element={<AdminDashboard />} />
+          }
+        />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

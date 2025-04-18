@@ -1,8 +1,12 @@
 import express from 'express';
 import pool from '../db.js';
+import { verifyToken, verifyAdmin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Place new order
+router.use(verifyToken);
+router.use(verifyAdmin);
+
 router.post('/', async (req, res) => {
   const { buyer_name, buyer_contact, delivery_address, items } = req.body;
   try {
@@ -52,6 +56,38 @@ router.put('/:id', async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update order' });
+  }
+});
+
+// GET /api/orders/buyer?identifier=value
+router.get('/buyer', async (req, res) => {
+  const { identifier } = req.query;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM orders WHERE contact = $1 OR email = $1 ORDER BY created_at DESC',
+      [identifier]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching buyer orders:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+router.get('/buyer/:contact', async (req, res) => {
+  const { contact } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM orders WHERE contact = $1 ORDER BY created_at DESC',
+      [contact]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching buyer orders:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
