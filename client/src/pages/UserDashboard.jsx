@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/authContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import ProductCatalogue from './ProductCatalogue.jsx';
+import OrderForm from './OrderForm.jsx';
 import axios from 'axios';
 
 const UserDashboard = () => {
-  const { user, token } = useAuth(); // Get user data from context
+  const { user} = useAuth(); // Get user data from context
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token"); // Get the token from localStorage
 
   useEffect(() => {
     // Redirect if the user is not authenticated
@@ -14,7 +17,8 @@ const UserDashboard = () => {
       navigate('/login'); // Redirect to login if not authenticated
     } else {
       // Fetch user orders (this can be adapted based on your database schema)
-      axios.get('http://localhost:5000/api/orders', {
+      axios.get(`http://localhost:5000/api/orders/buyer/${user.name}`, {
+
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
@@ -51,7 +55,7 @@ const UserDashboard = () => {
             {orders.map((order) => (
               <tr key={order.id} className="border-t border-gray-200 hover:bg-blue-50">
                 <td className="py-2 px-4">{order.id}</td>
-                <td className="py-2 px-4">{order.product_name}</td>
+                <td className="py-2 px-4">{order.product_id}</td>
                 <td className="py-2 px-4">{order.quantity}</td>
                 <td className="py-2 px-4">{order.status}</td>
               </tr>
@@ -59,6 +63,8 @@ const UserDashboard = () => {
           </tbody>
         </table>
       </div>
+      <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => navigate('/product-catalogue')}>Browse Products</button>
+        <OrderForm /> {/* Include the OrderForm component here */}
     </div>
   );
 };

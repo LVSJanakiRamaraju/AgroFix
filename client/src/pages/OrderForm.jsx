@@ -1,6 +1,8 @@
 // src/pages/OrderForm.js
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/authContext'; 
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const OrderForm = () => {
   const [products, setProducts] = useState([]);
@@ -9,6 +11,9 @@ const OrderForm = () => {
   const [buyerName, setBuyerName] = useState('');
   const [buyerContact, setBuyerContact] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+
+  const { token } = useAuth(); // ✅ use context for token
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,22 +29,34 @@ const OrderForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!token) {
+      alert('You must be logged in to place an order.');
+      navigate('/login');
+      return;
+    }
+
     try {
-      const orderData = {
-        buyer_name: buyerName,
-        buyer_contact: buyerContact,
-        delivery_address: deliveryAddress,
-        items: [
-          {
-            product_id: selectedProduct,
-            quantity: quantity,
+      const response = await axios.post(
+        'http://localhost:5000/api/orders',
+        {
+          buyer_name: buyerName,
+          buyer_contact: buyerContact,
+          delivery_address: deliveryAddress,
+          product_id: selectedProduct,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
-        ],
-      };
-      await axios.post('http://localhost:5000/api/orders', orderData);
+        }
+      );
       alert('Order placed successfully!');
     } catch (err) {
-      console.error('Error placing order:', err);
+      console.error('Error placing order:', err?.response?.data || err.message);
+      alert('Error placing order: ' + (err?.response?.data?.message || err.message));
     }
   };
 
@@ -47,6 +64,7 @@ const OrderForm = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Place Order</h1>
       <form onSubmit={handleSubmit}>
+        {/* Product Select */}
         <div className="mb-4">
           <label htmlFor="product" className="block text-sm font-semibold">Select Product</label>
           <select
@@ -54,6 +72,7 @@ const OrderForm = () => {
             value={selectedProduct}
             onChange={(e) => setSelectedProduct(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           >
             <option value="">--Choose Product--</option>
             {products.map((product) => (
@@ -64,6 +83,7 @@ const OrderForm = () => {
           </select>
         </div>
 
+        {/* Quantity */}
         <div className="mb-4">
           <label htmlFor="quantity" className="block text-sm font-semibold">Quantity</label>
           <input
@@ -73,9 +93,11 @@ const OrderForm = () => {
             onChange={(e) => setQuantity(e.target.value)}
             min="1"
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           />
         </div>
 
+        {/* Buyer Name */}
         <div className="mb-4">
           <label htmlFor="buyerName" className="block text-sm font-semibold">Your Name</label>
           <input
@@ -84,9 +106,11 @@ const OrderForm = () => {
             value={buyerName}
             onChange={(e) => setBuyerName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           />
         </div>
 
+        {/* Buyer Contact */}
         <div className="mb-4">
           <label htmlFor="buyerContact" className="block text-sm font-semibold">Contact Information</label>
           <input
@@ -95,9 +119,11 @@ const OrderForm = () => {
             value={buyerContact}
             onChange={(e) => setBuyerContact(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
+            required
           />
         </div>
 
+        {/* Delivery Address */}
         <div className="mb-4">
           <label htmlFor="deliveryAddress" className="block text-sm font-semibold">Delivery Address</label>
           <textarea
@@ -106,6 +132,7 @@ const OrderForm = () => {
             onChange={(e) => setDeliveryAddress(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
             rows="3"
+            required
           ></textarea>
         </div>
 

@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
 
-  // Check if user data exists in localStorage on initial load
+  // Load user from localStorage on first render
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -24,25 +24,31 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      const { token, isAdmin } = response.data;
+      console.log("Login response:", response.data); // Debugging line
+      const { token, isAdmin, name } = response.data;
 
-      // Save the token and user information (including isAdmin) to localStorage
+      const userData = { email, isAdmin, name };
+
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify({ email, isAdmin }));
-      
+      localStorage.setItem('user', JSON.stringify(userData));
+
       setToken(token);
-      setUser({ email, isAdmin });
+      setUser(userData);
     } catch (error) {
-      console.error('Login failed', error);
+      console.error('Login failed', error.response?.data || error.message);
+      throw error;
     }
   };
 
   const register = async (name, email, password) => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
-      setUser(response.data);
+
+      // Optional: auto-login after register
+      await login(email, password);
     } catch (error) {
-      console.error('Registration failed', error);
+      console.error('Registration failed', error.response?.data || error.message);
+      throw error;
     }
   };
 

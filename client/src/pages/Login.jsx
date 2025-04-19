@@ -16,10 +16,10 @@ const Login = () => {
         e.preventDefault();
         try {
         const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-        const { token, isAdmin } = response.data;
+        const { token, isAdmin, name } = response.data;
         localStorage.setItem('authToken', token);
         localStorage.setItem('Admin', response.data.isAdmin);  // Store user role
-        localStorage.setItem('user', JSON.stringify({ email, isAdmin }));
+        localStorage.setItem('user', JSON.stringify({ email, isAdmin, name }));
         await login(email, password);
         console.log(response.data);
         if (response.data.isAdmin) {

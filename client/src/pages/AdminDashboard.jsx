@@ -115,6 +115,7 @@ const AdminDashboard = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded shadow">
           <thead>
             <tr className="bg-green-600 text-white">
+              <th className="py-3 px-4 text-left">Product Id</th>
               <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 px-4 text-left">Price</th>
               <th className="py-3 px-4 text-left">Quantity Available</th>
@@ -123,6 +124,7 @@ const AdminDashboard = () => {
           <tbody>
             {products.map((product) => (
               <tr key={product.id} className="border-t border-gray-200 hover:bg-green-50">
+                <td className="py-2 px-4">{product.id}</td>
                 <td className="py-2 px-4">{product.name}</td>
                 <td className="py-2 px-4">₹{product.price}</td>
                 <td className="py-2 px-4">{product.stock}</td>
@@ -152,10 +154,10 @@ const AdminDashboard = () => {
               <tr key={order.id} className="border-t border-gray-200 hover:bg-blue-50">
                 <td className="py-2 px-4">{order.id}</td>
                 <td className="py-2 px-4">{order.buyer_name || 'N/A'}</td>
-                <td className="py-2 px-4">{order.xyz}</td>
-                <td className="py-2 px-4">{order.items['quantity']}</td>
+                <td className="py-2 px-4">{order.product_id}</td>
+                <td className="py-2 px-4">{order.quantity}</td>
                 <td className="py-2 px-4">{order.status}</td>
-                <td className="py-2 px-4">{new Date(order.created_at).toLocaleString()}</td>
+                <td className="py-2 px-4">{new Date(order.updated_at).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
