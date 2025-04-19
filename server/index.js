@@ -24,6 +24,8 @@ pool.connect((err) => {
   }
 });
 
+app.use(cors({ origin: "agro-fix.vercel.app" }));
+
 // API Routes
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
