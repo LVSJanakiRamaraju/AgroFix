@@ -17,6 +17,8 @@ const AdminDashboard = () => {
   });
   const navigate = useNavigate();
 
+  const URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (!user || !user.isAdmin) {
       navigate('/');
@@ -27,13 +29,13 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get(`${URL}/api/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts(response.data);
 
 
-      axios.get('http://localhost:5000/api/orders', {
+      axios.get(`${URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
@@ -50,7 +52,7 @@ const AdminDashboard = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/products', newProduct, {
+      await axios.post(`${URL}/api/products`, newProduct, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNewProduct({ name: '', description: '', price: '', stock: '' });

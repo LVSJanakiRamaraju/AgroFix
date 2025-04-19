@@ -10,7 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
 
-  // Load user from localStorage on first render
+  const URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const response = await axios.post(`${URL}/api/auth/login`, { email, password });
       console.log("Login response:", response.data); // Debugging line
       const { token, isAdmin, name } = response.data;
 
@@ -42,9 +43,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+      const response = await axios.post(`${URL}/api/auth/register`, { name, email, password });
 
-      // Optional: auto-login after register
       await login(email, password);
     } catch (error) {
       console.error('Registration failed', error.response?.data || error.message);

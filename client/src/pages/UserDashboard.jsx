@@ -6,18 +6,20 @@ import OrderForm from './OrderForm.jsx';
 import axios from 'axios';
 
 const UserDashboard = () => {
-  const { user} = useAuth(); // Get user data from context
+  const { user} = useAuth(); 
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token"); // Get the token from localStorage
+  const token = localStorage.getItem("token"); 
+
+  const URL = import.meta.env.VITE_API_URL 
 
   useEffect(() => {
-    // Redirect if the user is not authenticated
+
     if (!user) {
-      navigate('/login'); // Redirect to login if not authenticated
+      navigate('/login'); 
     } else {
-      // Fetch user orders (this can be adapted based on your database schema)
-      axios.get(`http://localhost:5000/api/orders/buyer/${user.name}`, {
+      
+      axios.get(`${URL}/api/orders/buyer/${user.name}`, {
 
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -64,7 +66,7 @@ const UserDashboard = () => {
         </table>
       </div>
       <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => navigate('/product-catalogue')}>Browse Products</button>
-        <OrderForm /> {/* Include the OrderForm component here */}
+        <OrderForm />
     </div>
   );
 };

@@ -12,13 +12,15 @@ const OrderForm = () => {
   const [buyerContact, setBuyerContact] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
-  const { token } = useAuth(); // ✅ use context for token
+  const URL = import.meta.env.VITE_API_URL;
+
+  const { token } = useAuth(); 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products');
+        const response = await axios.get(`${URL}/api/products`);
         setProducts(response.data);
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -38,7 +40,7 @@ const OrderForm = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/orders',
+        `${URL}/api/orders`,
         {
           buyer_name: buyerName,
           buyer_contact: buyerContact,

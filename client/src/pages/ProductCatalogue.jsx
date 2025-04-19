@@ -5,10 +5,12 @@ import axios from 'axios';
 const ProductCatalogue = () => {
   const [products, setProducts] = useState([]);
 
+  const URL = import.meta.env.VITE_API_URL; 
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products');
+        const response = await axios.get(`${URL}/api/products`);
         setProducts(response.data);
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -19,7 +21,7 @@ const ProductCatalogue = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Product Table */}
+
       <h2 className="text-xl font-semibold mb-2 text-gray-800">Product List</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow">

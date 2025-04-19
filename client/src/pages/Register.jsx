@@ -10,7 +10,9 @@ const Register = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const yourAdminEmail = 'rajakanumuri@gmail.com'; // Replace this with your email
+  const URL = import.meta.env.VITE_API_URL; 
+
+  const yourAdminEmail = 'rajakanumuri@gmail.com'; 
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -24,11 +26,11 @@ const Register = () => {
 
     const payload = {
       ...formData,
-      isAdmin: formData.email === 'rajakanumuri2005@gmail.com' // only you're admin
+      isAdmin: formData.email === 'rajakanumuri2005@gmail.com' 
     };
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
+      const res = await fetch(`${URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

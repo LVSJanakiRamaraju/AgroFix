@@ -6,6 +6,8 @@ import axios from "axios";
 function AdminInventory() {
   const { user, token } = useAuth();
   const [products, setProducts] = useState([]);
+
+  const URL = import.meta.env.VITE_API_URL;
   
   const [editId, setEditId] = useState(null);
   const [newProduct, setNewProduct] = useState({
@@ -18,7 +20,7 @@ function AdminInventory() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get(`${URL}/api/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts(response.data);
@@ -39,7 +41,7 @@ function AdminInventory() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/products', newProduct, {
+      await axios.post(`${URL}/api/products`, newProduct, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNewProduct({ name: '', description: '', price: '', stock: '' });
@@ -53,7 +55,7 @@ function AdminInventory() {
     console.log("Updating product with ID:", editId); // Debugging line
     console.log("New product data:", newProduct); // Debugging line
     try {
-      await axios.put(`http://localhost:5000/api/products/${editId}`, newProduct, {
+      await axios.put(`${URL}/api/products/${editId}`, newProduct, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEditId(null);
@@ -66,7 +68,7 @@ function AdminInventory() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure to delete this product?")) {
-      await axios.delete(`http://localhost:5000/api/products/${id}`);
+      await axios.delete(`${URL}/api/products/${id}`);
       fetchProducts();
     }
   };

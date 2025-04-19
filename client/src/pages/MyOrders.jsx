@@ -2,16 +2,18 @@ import { useState } from "react";
 import axios from "axios";
 
 function MyOrders() {
-  const [identifier, setIdentifier] = useState(""); // contact or email
+  const [identifier, setIdentifier] = useState(""); 
   const [statusFilter, setStatusFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const URL = import.meta.env.VITE_API_URL;
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/orders/buyer`, {
+      const res = await axios.get(`${URL}/api/orders/buyer`, {
         params: { identifier }
       });
 
