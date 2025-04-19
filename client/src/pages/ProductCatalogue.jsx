@@ -19,15 +19,31 @@ const ProductCatalogue = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Product Catalogue</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {products.map((product) => (
-          <div key={product.id} className="bg-white p-4 shadow rounded-lg">
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-gray-600">Price: ${product.price}</p>
-          </div>
-        ))}
+      {/* Product Table */}
+      <h2 className="text-xl font-semibold mb-2 text-gray-800">Product List</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded shadow">
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="py-3 px-4 text-left">Product Id</th>
+              <th className="py-3 px-4 text-left">Name</th>
+              <th className="py-3 px-4 text-left">Price</th>
+              <th className="py-3 px-4 text-left">Quantity Available</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-t border-gray-200 hover:bg-green-50">
+                <td className="py-2 px-4">{product.id}</td>
+                <td className="py-2 px-4">{product.name}</td>
+                <td className="py-2 px-4">₹{product.price}</td>
+                <td className="py-2 px-4">{product.stock}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
     </div>
   );
 };

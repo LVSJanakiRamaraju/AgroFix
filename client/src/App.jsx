@@ -8,6 +8,7 @@ import UserDashboard from './pages/UserDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import { AuthProvider } from './context/authContext';
+import ProductCatalogue from './pages/ProductCatalogue';
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           }
         />
         <Route path='/user-dashboard' element={<UserDashboard />} />
+        <Route path='/product-catalogue' element={<ProductCatalogue />}/>
       </Routes>
     </Router>
     </AuthProvider>

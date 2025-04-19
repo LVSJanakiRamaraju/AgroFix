@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/authContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import AdminInventory from './AdminInventory.jsx'; 
 import axios from 'axios';
 
 const AdminDashboard = () => {
@@ -64,7 +65,7 @@ const AdminDashboard = () => {
       <h1 className="text-3xl font-bold mb-4 text-center text-green-700">Admin Dashboard</h1>
 
       {/* Add Product Form */}
-      <div className="bg-white p-6 rounded shadow mb-8">
+      {/* <div className="bg-white p-6 rounded shadow mb-8">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Add New Product</h2>
         <form onSubmit={handleAddProduct} className="grid gap-4 md:grid-cols-2">
           <input
@@ -107,33 +108,8 @@ const AdminDashboard = () => {
             Add Product
           </button>
         </form>
-      </div>
-
-      {/* Product Table */}
-      <h2 className="text-xl font-semibold mb-2 text-gray-800">Product List</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded shadow">
-          <thead>
-            <tr className="bg-green-600 text-white">
-              <th className="py-3 px-4 text-left">Product Id</th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Price</th>
-              <th className="py-3 px-4 text-left">Quantity Available</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-t border-gray-200 hover:bg-green-50">
-                <td className="py-2 px-4">{product.id}</td>
-                <td className="py-2 px-4">{product.name}</td>
-                <td className="py-2 px-4">₹{product.price}</td>
-                <td className="py-2 px-4">{product.stock}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
+      </div> */}
+      <AdminInventory/>
 
       <h2 className="text-xl font-semibold mt-8 mb-2 text-gray-800">Orders</h2>
 
