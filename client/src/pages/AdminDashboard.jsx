@@ -1,5 +1,5 @@
 // src/pages/AdminDashboard.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/authContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import AdminInventory from './AdminInventory.jsx'; 
@@ -16,6 +16,12 @@ const AdminDashboard = () => {
     stock: '',
   });
   const navigate = useNavigate();
+
+  const validTransitions = {
+    "Pending": ["In Progress"],
+    "In Progress": ["Delivered"],
+    "Delivered": []
+  };
 
   const URL = import.meta.env.VITE_API_URL;
 
@@ -49,6 +55,21 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleStatusChange = async (orderId, newStatus) => {
+    console.log("Updating order status:", orderId, newStatus); // Debugging line
+    try {
+      await axios.put(
+        `${URL}/api/orders/${orderId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}`,  'Content-Type': 'application/json' } }
+      );
+      fetchProducts();
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+      alert("Failed to update order status.");
+    }
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
@@ -61,6 +82,14 @@ const AdminDashboard = () => {
       console.error('Error adding product:', error);
     }
   };
+
+    const productMap = useMemo(() => {
+      const map = {};
+      products.forEach((p) => {
+        map[p.id] = p.name;
+      });
+      return map;
+    }, [products]);
 
   return (
     <div className="admin-dashboard p-6">
@@ -132,9 +161,25 @@ const AdminDashboard = () => {
               <tr key={order.id} className="border-t border-gray-200 hover:bg-blue-50">
                 <td className="py-2 px-4">{order.id}</td>
                 <td className="py-2 px-4">{order.buyer_name || 'N/A'}</td>
-                <td className="py-2 px-4">{order.product_id}</td>
+                <td className="py-2 px-4">{productMap[order.product_id] || "Unknown Product"}</td>
                 <td className="py-2 px-4">{order.quantity}</td>
-                <td className="py-2 px-4">{order.status}</td>
+                <td className="py-2 px-4">
+                  <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{order.status}</span>
+                      {validTransitions[order.status]?.length > 0 && (
+                        <select
+                          className="text-sm border px-2 py-1 rounded"
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>Change</option>
+                          {validTransitions[order.status].map((status) => (
+                            <option key={status} value={status}>{status}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                </td>
                 <td className="py-2 px-4">{new Date(order.updated_at).toLocaleString()}</td>
               </tr>
             ))}
