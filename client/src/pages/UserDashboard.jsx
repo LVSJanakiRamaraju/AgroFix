@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/authContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import ProductCatalogue from './ProductCatalogue.jsx';
@@ -6,37 +6,61 @@ import OrderForm from './OrderForm.jsx';
 import axios from 'axios';
 
 const UserDashboard = () => {
-  const { user} = useAuth(); 
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token"); 
+  const token = localStorage.getItem("token");
 
-  const URL = import.meta.env.VITE_API_URL 
+  const URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-
-    if (!user) {
-      navigate('/login'); 
-    } else {
-      
-      axios.get(`${URL}/api/orders/buyer/${user.name}`, {
-
+  const fetchOrders = () => {
+    axios
+      .get(`${URL}/api/orders/buyer/${user.name}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then((response) => {
-          setOrders(response.data);
+      .then((response) => {
+        setOrders(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching orders:', error);
+      });
+  };
+
+
+
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else {
+      fetchOrders();
+
+      axios
+        .get(`${URL}/api/products`, {
+          headers: { Authorization: `Bearer ${token}` },
         })
-        .catch((error) => {
-          console.error('Error fetching orders:', error);
+        .then((res) => {
+          setProducts(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching products:", err);
         });
     }
   }, [user, token, navigate]);
+
+  const productMap = useMemo(() => {
+    const map = {};
+    products.forEach((p) => {
+      map[p.id] = p.name;
+    });
+    return map;
+  }, [products]);
 
   return (
     <div className="user-dashboard p-6">
       <h1 className="text-3xl font-bold mb-4 text-center text-blue-700">User Dashboard</h1>
 
-      {/* Display user information */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold">Welcome, {user?.name}!</h2>
         <p className="text-gray-600">Email: {user?.email}</p>
@@ -57,7 +81,7 @@ const UserDashboard = () => {
             {orders.map((order) => (
               <tr key={order.id} className="border-t border-gray-200 hover:bg-blue-50">
                 <td className="py-2 px-4">{order.id}</td>
-                <td className="py-2 px-4">{order.product_id}</td>
+                <td className="py-2 px-4">{productMap[order.product_id] || "Unknown Product"}</td>
                 <td className="py-2 px-4">{order.quantity}</td>
                 <td className="py-2 px-4">{order.status}</td>
               </tr>
@@ -65,8 +89,15 @@ const UserDashboard = () => {
           </tbody>
         </table>
       </div>
-      <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => navigate('/product-catalogue')}>Browse Products</button>
-        <OrderForm />
+
+      <button
+        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+        onClick={() => navigate('/product-catalogue')}
+      >
+        Browse Products
+      </button>
+
+      <OrderForm onOrderPlaced={fetchOrders}/>
     </div>
   );
 };

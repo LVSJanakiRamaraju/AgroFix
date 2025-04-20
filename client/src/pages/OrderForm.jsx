@@ -4,7 +4,7 @@ import { useAuth } from '../context/authContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const OrderForm = () => {
+const OrderForm = ({ onOrderPlaced }) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -37,6 +37,16 @@ const OrderForm = () => {
       navigate('/login');
       return;
     }
+    const selected = products.find(p => p.id === parseInt(selectedProduct));
+
+    if (!selected) {
+      alert('Invalid product selected.');
+      return;
+    }
+    if (parseInt(quantity) > selected.stock) {
+      alert('Out of stock or requested quantity exceeds available stock.');
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -56,6 +66,16 @@ const OrderForm = () => {
         }
       );
       alert('Order placed successfully!');
+
+      setSelectedProduct('');
+      setQuantity(1);
+      setBuyerName('');
+      setBuyerContact('');
+      setDeliveryAddress('');
+
+      if (onOrderPlaced) {
+        onOrderPlaced(); 
+      }
     } catch (err) {
       console.error('Error placing order:', err?.response?.data || err.message);
       alert('Error placing order: ' + (err?.response?.data?.message || err.message));
