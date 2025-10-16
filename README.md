@@ -1,7 +1,7 @@
 
-# 🥦 Agrofix - Bulk Fruit & Vegetable Ordering System
+# 🥦 Agrofix - Fruit & Vegetable Ordering System
 
-Agrofix is a full-stack web application designed for **bulk ordering** of vegetables and fruits. It enables seamless communication and transactions between **buyers** and **admins**. Buyers can place orders and track them, while admins can manage inventory and update order statuses.
+Agrofix is a full-stack web application designed for **ordering** of vegetables and fruits. It enables seamless communication and transactions between **buyers** and **admins**. Buyers can place orders and track them, while admins can manage inventory and update order statuses.
 
 ---
 
@@ -9,13 +9,13 @@ Agrofix is a full-stack web application designed for **bulk ordering** of vegeta
 
 ### 👨‍🌾 Buyer Side:
 - Browse available vegetables and fruits.
-- Place bulk orders with quantity, delivery address, and contact info.
+- Place orders with quantity, delivery address, and contact info.
 - Track your orders by name or contact number.
 
 ### 👩‍💼 Admin Side:
 - Admin login authentication with JWT.
 - View all buyer orders.
-- Update order statuses: `Pending`, `Processing`, `Shipped`, `Delivered`.
+- Update order statuses: `Pending`, `Processing`, `Shipped`, `Delivered`, `Cancelled`.
 - Manage product stock and inventory.
 
 ---

@@ -18,8 +18,9 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const validTransitions = {
-    "Pending": ["In Progress"],
-    "In Progress": ["Delivered"],
+    "Pending": ["Processing"],
+    "Processing": ["Shipped"],
+    "Shipped": ["Delivered", "Cancelled"],
     "Delivered": []
   };
 
